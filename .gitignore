@@ -1,0 +1,4 @@
+# Exclude Terraform objects (.terraform, .tfstate, etc.)
+.terraform
+~
+.terraform*
