@@ -25,23 +25,23 @@
 <!-- PROJECT LOGO -->
 <br />
 <div align="center">
-  <a href="https://github.com/othneildrew/Best-README-Template">
-    <img src="images/logo.png" alt="Logo" width="80" height="80">
+  <a href="https://github.com/weinmann-phil/terraform-gitlab-user-management">
+    <img src="img/usr-mgmt.png" alt="Logo" width="80" height="80">
   </a>
 
-  <h3 align="center">Best-README-Template</h3>
+  <h3 align="center">GitLab User Management</h3>
 
   <p align="center">
-    An awesome README template to jumpstart your projects!
+    Central user management with Terraform 
     <br />
-    <a href="https://github.com/othneildrew/Best-README-Template"><strong>Explore the docs »</strong></a>
+    <a href="https://github.com/weinmann-phil/terraform-gitlab-user-management"><strong>Explore the docs »</strong></a>
     <br />
     <br />
-    <a href="https://github.com/othneildrew/Best-README-Template">View Demo</a>
+    <a href="https://github.com/weinmann-phil/terraform-gitlab-user-management">View Demo</a>
     ·
-    <a href="https://github.com/othneildrew/Best-README-Template/issues">Report Bug</a>
+    <a href="https://github.com/weinmann-phil/terraform-gitlab-user-management/issues">Report Bug</a>
     ·
-    <a href="https://github.com/othneildrew/Best-README-Template/issues">Request Feature</a>
+    <a href="https://github.com/weinmann-phil/terraform-gitlab-user-management/issues">Request Feature</a>
   </p>
 </div>
 
@@ -84,7 +84,7 @@ Here's why:
   </ol>
 </details>
 
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
+<p align="right">(<a href="#gitlab-user-administration">back to top</a>)</p>
 
 <!-- Dependencies/technologies -->
 ### Built With
@@ -96,7 +96,7 @@ Please check out their respective documentation:
 
 [![GitLab][GitLab]][GitLab-url]
 
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
+<p align="right">(<a href="#gitlab-user-administration">back to top</a>)</p>
 
 <!-- GETTING STARTED -->
 ## Getting Started
@@ -113,7 +113,6 @@ If you have not yet installed these items, please take the following steps:
   sudo apt install gnome-terminal
   sudo apt update
   sudo apt install ./docker-desktop-<version>-<arch>.deb
-
   ```
 
 * Install Terraform
@@ -141,147 +140,162 @@ If you have not yet installed these items, please take the following steps:
   --shm-size 256m \
   gitlab/gitlab-ce:latest
   ```
-  
-  + Get the initial root password
 
-    ```sh
-    sudo docker exec -it gitlab-ce grep 'Password:' /etc/gitlab/initial_root_password
-    ```
+* Create an access token with administrative privileges
 
 ### Installation
 
-_Below is an example of how you can instruct your audience on installing and setting up your app. This template doesn't rely on any external dependencies or services._
+> __NOTE__:
+>
+> This is a sample usage of this project.
+> If you are applying this within any environments other than a local test environment,
+> please mind to change the settings for the provider configuration and the backend
+> configurations.
+>
+> Otherwise, this will not work.
 
-1. Get a free API Key at [https://example.com](https://example.com)
-2. Clone the repo
+1. Set up your self-hosted GitLab system
+
    ```sh
-   git clone https://github.com/your_username_/Project-Name.git
+   sudo docker run -d \
+   -p 443:443 -p 80:80 -p 22:22 \
+   --hostname localhost \
+   --name gitlab-ce \
+   --restart always \
+   -v $GITLAB_HOME/config:/etc/gitlab \
+   -v $GITLAB_HOME/logs:/var/log/gitlab \
+   -v $GITLAB_HOME/data:/var/opt/gitlab \
+   --shm-size 256m \
+   gitlab/gitlab-ce:latest
    ```
-3. Install NPM packages
+
+1. Create an access token with administrative privileges
+   
+   <details>
+     <summary>Create access token</summary>
+
+     ![create-access-token](./img/gitlab_access-token.png)
+
+   </details>
+
+1. Enter token and a list of users into terraform.tfvars
+
+1. Switch directory to the workspace
+
    ```sh
-   npm install
-   ```
-4. Enter your API in `config.js`
-   ```js
-   const API_KEY = 'ENTER YOUR API';
+   cd environments/gitlab/
    ```
 
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
+1. Initialize project
 
+   ```sh
+   terraform init
+   ```
+
+1. Apply changes to your GitLab
+
+   ```sh
+   terraform apply
+   ```
+
+<p align="right">(<a href="#gitlab-user-administration">back to top</a>)</p>
 
 
 <!-- USAGE EXAMPLES -->
 ## Usage
 
-Use this space to show useful examples of how a project can be used. Additional screenshots, code examples and demos work well in this space. You may also link to more resources.
+This backend is useful to have a single source of truth for user management within GitLab.
+Combined with a GitLab pages form, it allows recruiters to add users, be they freelancers
+or permanent staff, without the need of anyone with administrative rights.
 
-_For more examples, please refer to the [Documentation](https://example.com)_
+With the GitLab provider, it is possible to control the amount of access one gets without
+enabling erroneous deletions and the like.
 
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
-
+<p align="right">(<a href="#gitlab-user-administration">back to top</a>)</p>
 
 
 <!-- ROADMAP -->
 ## Roadmap
 
 - [x] Add Changelog
-- [x] Add back to top links
-- [ ] Add Additional Templates w/ Examples
-- [ ] Add "components" document to easily copy & paste sections of the readme
-- [ ] Multi-language Support
-    - [ ] Chinese
-    - [ ] Spanish
+- [x] Add License
+- [x] Add the Terraform backend configurations and modules
+- [x] Add Readme
+- [ ] Add Group and Repository IAM (expand the logic)
+- [ ] Add GitLab Pages sample
+- [ ] Add a GitLab CI pipeline configuration
+- [ ] Add an overview (expand the logic)
+   
+See the [open issues](https://github.com/weinmann-phil/terraform-gitlab-user-management/issues) for a full list of proposed features (and known issues).
 
-See the [open issues](https://github.com/othneildrew/Best-README-Template/issues) for a full list of proposed features (and known issues).
-
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
-
+<p align="right">(<a href="#gitlab-user-administration">back to top</a>)</p>
 
 
 <!-- CONTRIBUTING -->
 ## Contributing
 
-Contributions are what make the open source community such an amazing place to learn, inspire, and create. Any contributions you make are **greatly appreciated**.
+This is my first project in an attempt in giving back to the community.
+Any contributions you make are **greatly appreciated**.
 
-If you have a suggestion that would make this better, please fork the repo and create a pull request. You can also simply open an issue with the tag "enhancement".
+If you have a suggestion that would make this better, please fork the repo and create a pull request. 
+You can also simply open an issue with the tag "enhancement".
 Don't forget to give the project a star! Thanks again!
 
 1. Fork the Project
-2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the Branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
+1. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
+1. Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
+1. Push to the Branch (`git push origin feature/AmazingFeature`)
+1. Open a Pull Request
 
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
-
+<p align="right">(<a href="#gitlab-user-administration">back to top</a>)</p>
 
 
 <!-- LICENSE -->
 ## License
 
-Distributed under the MIT License. See `LICENSE.txt` for more information.
+Distributed under the MIT License. See `LICENSE` for more information.
 
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
-
+<p align="right">(<a href="#gitlab-user-administration">back to top</a>)</p>
 
 
 <!-- CONTACT -->
 ## Contact
 
-Your Name - [@your_twitter](https://twitter.com/your_username) - email@example.com
+Philip Weinmann - Philip.Weinmannl@protonmail.com
 
-Project Link: [https://github.com/your_username/repo_name](https://github.com/your_username/repo_name)
+Project Link: [https://github.com/weinmann-phil/terraform-gitlab-user-management](https://github.com/weinmann-phil/terraform-gitlab-user-management)
 
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
-
+<p align="right">(<a href="#gitlab-user-administration">back to top</a>)</p>
 
 
 <!-- ACKNOWLEDGMENTS -->
 ## Acknowledgments
 
-Use this space to list resources you find helpful and would like to give credit to. I've included a few of my favorites to kick things off!
-
-* [Choose an Open Source License](https://choosealicense.com)
-* [GitHub Emoji Cheat Sheet](https://www.webpagefx.com/tools/emoji-cheat-sheet)
-* [Malven's Flexbox Cheatsheet](https://flexbox.malven.co/)
-* [Malven's Grid Cheatsheet](https://grid.malven.co/)
-* [Img Shields](https://shields.io)
-* [GitHub Pages](https://pages.github.com)
-* [Font Awesome](https://fontawesome.com)
-* [React Icons](https://react-icons.github.io/react-icons/search)
+* [README template](https://github.com/othneildrew/Best-README-Template)
+* [Docker Installation Guide](https://docs.docker.com/engine/install/ubuntu)
+* [Terraform Installation Guide](https://developer.hashicorp.com/terraform/tutorials/aws-get-started/install-cli)
+* [GitLab Docker Installation Guide](https://docs.gitlab.com/ee/install/docker.html)
+* [Terraform GitLab Provider](https://registry.terraform.io/providers/gitlabhq/gitlab/latest/docs)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 
-
 <!-- MARKDOWN LINKS & IMAGES -->
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
-[contributors-shield]: https://img.shields.io/github/contributors/othneildrew/Best-README-Template.svg?style=for-the-badge
-[contributors-url]: https://github.com/othneildrew/Best-README-Template/graphs/contributors
-[forks-shield]: https://img.shields.io/github/forks/othneildrew/Best-README-Template.svg?style=for-the-badge
-[forks-url]: https://github.com/othneildrew/Best-README-Template/network/members
-[stars-shield]: https://img.shields.io/github/stars/othneildrew/Best-README-Template.svg?style=for-the-badge
-[stars-url]: https://github.com/othneildrew/Best-README-Template/stargazers
-[issues-shield]: https://img.shields.io/github/issues/othneildrew/Best-README-Template.svg?style=for-the-badge
-[issues-url]: https://github.com/othneildrew/Best-README-Template/issues
-[license-shield]: https://img.shields.io/github/license/othneildrew/Best-README-Template.svg?style=for-the-badge
-[license-url]: https://github.com/othneildrew/Best-README-Template/blob/master/LICENSE.txt
+[contributors-shield]: https://img.shields.io/github/contributors/weinmann-phil/terraform-gitlab-user-management.svg?style=for-the-badge
+[contributors-url]: https://github.com/weinmann-phil/terraform-gitlab-user-management/graphs/contributors
+[forks-shield]: https://img.shields.io/github/forks/weinmann-phil/terraform-gitlab-user-management.svg?style=for-the-badge
+[forks-url]: https://github.com/weinmann-phil/terraform-gitlab-user-management/network/members
+[stars-shield]: https://img.shields.io/github/stars/weinmann-phil/terraform-gitlab-user-management.svg?style=for-the-badge
+[stars-url]: https://github.com/weinmann-phil/terraform-gitlab-user-management/stargazers
+[issues-shield]: https://img.shields.io/github/issues/weinmann-phil/terraform-gitlab-user-management.svg?style=for-the-badge
+[issues-url]: https://github.com/weinmann-phil/terraform-gitlab-user-management/issues
+[license-shield]: https://img.shields.io/github/license/weinmann-phil/terraform-gitlab-user-management.svg?style=for-the-badge
+[license-url]: https://github.com/weinmann-phil/terraform-gitlab-user-management/blob/main/LICENSE
 [linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
-[linkedin-url]: https://linkedin.com/in/othneildrew
-[product-screenshot]: images/screenshot.png
+[linkedin-url]: https://linkedin.com/in/philipweinmann
+[product-screenshot]: img/glab_user_mgmt_snapshot.png
 [Terraform]: https://img.shields.io/badge/terraform-4A235A?style=for-the-badge&logo=terraform
 [Terraform-url]: https://www.terraform.io/docs
 [GitLab]: https://img.shields.io/badge/GitLab-FF8800?style=for-the-badge&logo=gitlab
 [GitLab-url]: https://docs.gitlab.com/
-[Vue.js]: https://img.shields.io/badge/Vue.js-35495E?style=for-the-badge&logo=vuedotjs&logoColor=4FC08D
-[Vue-url]: https://vuejs.org/
-[Angular.io]: https://img.shields.io/badge/Angular-DD0031?style=for-the-badge&logo=angular&logoColor=white
-[Angular-url]: https://angular.io/
-[Svelte.dev]: https://img.shields.io/badge/Svelte-4A4A55?style=for-the-badge&logo=svelte&logoColor=FF3E00
-[Svelte-url]: https://svelte.dev/
-[Laravel.com]: https://img.shields.io/badge/Laravel-FF2D20?style=for-the-badge&logo=laravel&logoColor=white
-[Laravel-url]: https://laravel.com
-[Bootstrap.com]: https://img.shields.io/badge/Bootstrap-563D7C?style=for-the-badge&logo=bootstrap&logoColor=white
-[Bootstrap-url]: https://getbootstrap.com
-[JQuery.com]: https://img.shields.io/badge/jQuery-0769AD?style=for-the-badge&logo=jquery&logoColor=white
-[JQuery-url]: https://jquery.com 

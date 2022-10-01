@@ -1,7 +1,7 @@
 gitlab_token = "glpat-ukn8FTJnst_bAwN_EgAe"
 gitlab_users = [
   {
-    email = "allan.turing@test.software",
+    email = "alan.turing@test.software",
     is_external = false,
     is_admin = true
   },

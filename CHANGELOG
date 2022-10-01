@@ -6,6 +6,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.0.2] - 2022-10-01
+### Added
+
+- `README` with complete description of the project
+- `./img/` folder
+
 ## [0.0.1] - 2022-10-01
 ### Added
 - `CHANGELOG` file 
@@ -14,4 +20,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `.gitignore` with exceptions to the Git versioning control
 
 [Unreleased]: https://github.com/olivierlacan/keep-a-changelog/compare/v1.0.0...HEAD
-[0.0.1]: https://github.com/olivierlacan/keep-a-changelog/releases/tag/v0.0.1
+[0.0.1]: https://github.com/weinmann-phil/terraform-gitlab-user-management/releases/tag/v0.0.1
+[0.0.2]: https://github.com/weinmann-phil/terraform-gitlab-user-management/releases/tag/v0.0.2
