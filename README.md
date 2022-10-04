@@ -261,7 +261,7 @@ Distributed under the MIT License. See `LICENSE` for more information.
 <!-- CONTACT -->
 ## Contact
 
-Philip Weinmann - Philip.Weinmannl@protonmail.com
+Philip Weinmann - Philip.Weinmann@protonmail.com
 
 Project Link: [https://github.com/weinmann-phil/terraform-gitlab-user-management](https://github.com/weinmann-phil/terraform-gitlab-user-management)
 
