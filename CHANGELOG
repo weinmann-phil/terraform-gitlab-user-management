@@ -6,13 +6,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [0.0.2] - 2022-10-01
+## [0.0.1-03] - 2022-10-04
+### Modified
+
+- Added logic for membership assignment in `gitlab.tf` 
+- Added variables to `variables.tf` and to `terraform.tfvars`
+- Edited this `CHANGELOG`
+- Removed test outputs from `outputs.tf`
+
+## [0.0.1-02] - 2022-10-01
 ### Added
 
-- `README` with complete description of the project
 - `./img/` folder
 
-## [0.0.1] - 2022-10-01
+### Modified
+
+- `README` with complete description of the project
+
+## [0.0.1-01] - 2022-10-01
 ### Added
 - `CHANGELOG` file 
 - `README` initial documentation for the project
@@ -20,5 +31,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `.gitignore` with exceptions to the Git versioning control
 
 [Unreleased]: https://github.com/olivierlacan/keep-a-changelog/compare/v1.0.0...HEAD
-[0.0.1]: https://github.com/weinmann-phil/terraform-gitlab-user-management/releases/tag/v0.0.1
-[0.0.2]: https://github.com/weinmann-phil/terraform-gitlab-user-management/releases/tag/v0.0.2
+[0.0.1-01]: https://github.com/weinmann-phil/terraform-gitlab-user-management/releases/tag/v0.0.1
+[0.0.1-02]: https://github.com/weinmann-phil/terraform-gitlab-user-management/releases/tag/v0.0.2

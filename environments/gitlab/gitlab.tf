@@ -15,7 +15,6 @@
  * Sets constants or conditional variables for this area and further logic on input values
  */
 locals {
-  gitlab_var_active_user_array = (var.gitlab_users == null) ? [] : var.gitlab_users
   gitlab_var_active_user = [ for user in var.gitlab_users :
     {
       user = title(join(" ", split(".", split("@", user["email"])[0])))
@@ -25,7 +24,24 @@ locals {
       is_external = user["is_external"]
       project_limit = (user["is_external"] == true) ? 10 : 10000
       can_create_group = (user["is_external"] == true) ? false : true
+      membership = [ for project in user["membership"] : {
+        project = project.project
+        access_level = lookup(project, "access_level", user.is_external == true ? "reporter" : user.is_admin == true ? "maintainer" : "developer")
+      }]
     }
+  ]
+  gitlab_var_project_memberships = distinct(flatten([ for user in local.gitlab_var_active_user : [
+      for project in user.membership : {
+        user = user.user
+        project = project.project
+        access_level = project.access_level
+      }
+    ]
+  ]))
+  gitlab_var_project_paths = [
+    "test-group/project01",
+    "test-group/project02",
+    "test-group/project03",
   ]
 }
 
@@ -40,8 +56,8 @@ locals {
  * @param base_url (Required) Sets the URL of the self-hosted GitLab instance
  */
 provider "gitlab" {
-  token = var.gitlab_token
-  base_url = "http://localhost"
+  token    = var.gitlab_token
+  base_url = var.gitlab_public_host
 }
 
 /**
@@ -69,4 +85,35 @@ resource "gitlab_user" "glab" {
   can_create_group = each.value.can_create_group
   is_external      = each.value.is_external
   reset_password   = true
+}
+
+/**
+ * GitLab Projects Data Source
+ *
+ * Gets data and metadata from existing GitLab projects
+ *
+ * @param path_with_namespace (Required) Sets the fully qualified path to the repo
+ */
+data "gitlab_project" "glab_project_id" {
+  for_each = toset(local.gitlab_var_project_paths)
+  path_with_namespace = each.key
+}
+
+/**
+ * GitLab Project Membership
+ *
+ * Manages memberships with respect to the user. 
+ * In this case, the relationship is strictly that of one user to many projects
+ *
+ * @param access_level  (Required) Sets the access level for the member. 
+ *   Valid values are: no one, minimal, guest, reporter, developer, maintainer, owner, master
+ * @param project_id    (Required) Sets the ID of the project
+ * @param user_id       (Required) Sets the ID of the user
+ * @param expires_at    (Optional) Sets the expiration date of the project membership
+ */
+resource "gitlab_project_membership" "glab" {
+  for_each = {for member in local.gitlab_var_project_memberships : "${member.user}.${member.project}.${member.access_level}" => member}
+  access_level = each.value.access_level
+  project_id = data.gitlab_project.glab_project_id[each.value.project].id
+  user_id = gitlab_user.glab[each.value.user].id
 }
