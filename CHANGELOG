@@ -6,6 +6,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.0.2] - 2022-10-08
+
+### Added
+
+- `./modules/gitlab` with extended logic
+- `./environments/gitlab/main` with reference to gitlab module
+
+### Modified
+
+- mv `./environments/gitlab/gitlab.tf` `./environments/gitlab/main.tf`
+- set reference to module within `maint.tf`
+
+### Removed
+
+- `./environments/gitlab/outputs.tf`
+
 ## [0.0.1-03] - 2022-10-04
 ### Modified
 
