@@ -1,8 +1,8 @@
 ###############################################################################
-# GitLab User Management with Terraform
-# 
-# This module provides a tool with which to manage users within a local 
-# instance of GitLab. 
+# GitLab Module for User Management
+#
+# This module provides a tool with which to manage users within a local
+# instance of GitLab.
 # The tool is intended as a backend automation solution for recruiters within a
 # tech company. 
 #
@@ -38,32 +38,15 @@ locals {
       }
     ]
   ]))
-  gitlab_var_project_paths = [
-    "test-group/project01",
-    "test-group/project02",
-    "test-group/project03",
-  ]
-}
-
-/**
- * Provider Configuration
- *
- * Configures the provider to enable specific provider methods 
- * Please refer to the official documentation for further information:
- * https://registry.terraform.io/providers/gitlabhq/gitlab/latest/docs
- *
- * @param token    (Required) Sets the access token for the technical user
- * @param base_url (Required) Sets the URL of the self-hosted GitLab instance
- */
-provider "gitlab" {
-  token    = var.gitlab_token
-  base_url = var.gitlab_public_host
+  gitlab_var_project_paths = data.gitlab_projects.glab.projects[*].path_with_namespace
 }
 
 /**
  * GitLab User
  *
  * Manages the user based on a list of map entries
+ * For more information about this method, please refer to the following site:
+ * https://registry.terraform.io/providers/gitlabhq/gitlab/latest/docs/resources/user
  *
  * @param name             (Required) Sets the name of the GitLab user
  * @param username         (Required) Sets the username for the GitLab user
@@ -90,7 +73,28 @@ resource "gitlab_user" "glab" {
 /**
  * GitLab Projects Data Source
  *
+ * Gets data and metadata from any existing GitLab projects.
+ * For more information about this method, please refer to the following site:
+ * https://registry.terraform.io/providers/gitlabhq/gitlab/latest/docs/data-sources/projects
+ *
+ * @param order_by          (Optional) 
+ * @param include_subgroups (Optional) 
+ * @param archived          (Optional) 
+ * @param simple            (Optional) 
+ */
+data "gitlab_projects" "glab" {
+  order_by          = "name"
+  include_subgroups = true
+  archived          = false
+  simple            = true
+}
+
+/**
+ * GitLab Specific Project Data Source
+ *
  * Gets data and metadata from existing GitLab projects
+ * For more information about this method, please refer to the following site:
+ * https://registry.terraform.io/providers/gitlabhq/gitlab/latest/docs/data-sources/project
  *
  * @param path_with_namespace (Required) Sets the fully qualified path to the repo
  */
@@ -103,7 +107,9 @@ data "gitlab_project" "glab_project_id" {
  * GitLab Project Membership
  *
  * Manages memberships with respect to the user. 
- * In this case, the relationship is strictly that of one user to many projects
+ * In this case, the relationship is strictly that of one user to many projects. 
+ * For more information about this method, please refer to the following site:
+ * https://registry.terraform.io/providers/gitlabhq/gitlab/latest/docs/resources/project_membership
  *
  * @param access_level  (Required) Sets the access level for the member. 
  *   Valid values are: no one, minimal, guest, reporter, developer, maintainer, owner, master
