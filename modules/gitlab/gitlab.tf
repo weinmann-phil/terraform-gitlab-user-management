@@ -39,6 +39,75 @@ locals {
     ]
   ]))
   gitlab_var_project_paths = data.gitlab_projects.glab.projects[*].path_with_namespace
+  gitlab_var_existing_users = [ for user in data.gitlab_users.glab.users :
+    {
+      user              = user.name
+      username          = user.username
+      email             = user.email
+      is_admin          = user.is_admin
+      is_external       = user.external
+      project_limit     = user.projects_limit
+      can_create_group  = user.can_create_group
+      membership        = toset(flatten([ for project in local.gitlab_project_membership :
+        [ for member in project.members :
+            (member.member == user.username) ? {
+              project = project.project
+              access_level = member.access_level
+            } : {}
+        ]
+      ]))
+    }
+  ]
+  gitlab_project_membership = [ for project in data.gitlab_project_membership.glab : 
+    {
+      project = project.full_path
+      members = [ for member in project.members : 
+        {
+          member = member.username
+          access_level = member.access_level
+        }
+      ]
+    }
+  ]
+}
+
+/**
+ * GitLab Users Data Source
+ *
+ * Gets existing user data
+ * For more information about this method, please refer to the following site:
+ * https://registry.terraform.io/providers/gitlabhq/gitlab/latest/docs/data-sources/users
+ *
+ * @param active    (Optional) Sets the filter for active users
+ * @param order_by  (Optional) Sets the parameter by which the output is ordered. 
+ *   Accepted Values are `id`, `name`, `username`, `created_at`, or `updated_at`.
+ */
+data "gitlab_users" "glab" {
+  active = true
+  order_by = "name"
+}
+
+/**
+ * GitLab Project Membership Data Source
+ *
+ * Gets membership data from existing projects
+ */
+data "gitlab_project_membership" "glab" {
+  for_each = toset(local.gitlab_var_project_paths)
+  full_path = each.key
+}
+
+/**
+ * Local File
+ *
+ * Export the list of users with all project assignments
+ *
+ * @param content   (Required) Sets the content of the file
+ * @param filename  (Required) Sets the path for the export
+ */
+resource "local_file" "gitlab_users" {
+  content  = jsonencode(local.gitlab_var_existing_users)
+  filename = "${path.module}/../../environments/gitlab/export.json"
 }
 
 /**
